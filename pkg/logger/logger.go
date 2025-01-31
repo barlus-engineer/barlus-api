@@ -43,7 +43,7 @@ func Sinfo(values ...any) string {
 func Swarning(values ...any) string {
 	value := ValuesJoin(values...)
 	currentTime := time.Now().Format("2006/01/02 15:04:05")
-	result := fmt.Sprintf("%s [%syellow%s] %s", currentTime, colors.Yellow, colors.Reset, value)
+	result := fmt.Sprintf("%s [%swarning%s] %s", currentTime, colors.Yellow, colors.Reset, value)
 	return result
 }
 
@@ -166,7 +166,7 @@ func Sinfof(text string, values ...any) string {
 func Swarningf(text string, values ...any) string {
 	value := ValuesJoinf(text, values...)
 	currentTime := time.Now().Format("2006/01/02 15:04:05")
-	result := fmt.Sprintf("%s [%syellow%s] %s", currentTime, colors.Yellow, colors.Reset, value)
+	result := fmt.Sprintf("%s [%swarning%s] %s", currentTime, colors.Yellow, colors.Reset, value)
 	return result
 }
 
