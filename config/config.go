@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var GetConfig ConfigStrc
+var config ConfigStrc
 
 type ConfigStrc struct {
 	Name    string `yaml:"name"`
@@ -47,7 +47,11 @@ func LoadConfig() error {
 		return fmt.Errorf("%s: %v", text.ErrDecodeConfig, err)
 	}
 
-	GetConfig = cfg
+	config = cfg
 
 	return nil
+}
+
+func GetConfig() *ConfigStrc {
+	return &config
 }
