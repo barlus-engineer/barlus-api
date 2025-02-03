@@ -1,9 +1,10 @@
 package typeconv
 
 import (
-	"fmt"
 	"reflect"
 	"strconv"
+
+	"github.com/barlus-engineer/barlus-api/pkg/text"
 )
 
 func Str2Any(value string, t interface{}) (interface{}, error) {
@@ -17,7 +18,7 @@ func Str2Any(value string, t interface{}) (interface{}, error) {
 		case reflect.Bool:
 			return str2Bool(value)
 		default:
-			return nil, fmt.Errorf("unsupported type")
+			return nil, text.ErrTypeConvUnsupportType
 	}
 }
 
