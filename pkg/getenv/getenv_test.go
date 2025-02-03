@@ -8,11 +8,50 @@ import (
 )
 
 func TestGet(t *testing.T) {
+	key := "TEST_GETENV"
 	expected := "test"
-	os.Setenv("TESTTT_GETTT_ENVVV", expected)
-	value := getenv.Get("TESTTT_GETTT_ENVVV", "test")
+	os.Setenv(key, expected)
+	value := getenv.Get(key, expected)
 
 	if value != expected {
 		t.Errorf("%s != %s", value, expected)
 	}
 }
+
+type UserTest struct {
+	Name  string  `envkey:"TEST_GETENV_NAME" envdef:"Barlus"`
+	Age   int     `envkey:"TEST_GETENV_AGE" envdef:"15"`
+	Score float64 `envkey:"TEST_GETENV_SCORE"`
+}
+
+var DefaultUserExpected = UserTest{
+	Name:  "Barlus",
+	Age:   15,
+	Score: 0.0,
+}
+
+var UserExpected = UserTest{
+	Name:  "Mouk",
+	Age:   14,
+	Score: 3.7,
+}
+
+func TestGetStructDefault(t *testing.T) {
+	var user UserTest
+	if err := getenv.GetStruct(&user); err != nil {
+		t.Error(err)
+	}
+	if user != DefaultUserExpected {
+		t.Errorf("Expected %+v, but got %+v", DefaultUserExpected, user)
+	}
+}
+
+// func TestGetStruct(t *testing.T) {
+// 	var user UserTest
+// 	if err := getenv.GetStruct(&user); err != nil {
+// 		t.Error(err)
+// 	}
+// 	if user != UserExpected {
+// 		t.Errorf("Expected %+v, but got %+v", DefaultUserExpected, user)
+// 	}
+// }

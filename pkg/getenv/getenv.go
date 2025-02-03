@@ -1,10 +1,10 @@
 package getenv
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 
-	"github.com/barlus-engineer/barlus-api/pkg/logger"
 	"github.com/barlus-engineer/barlus-api/pkg/typeconv"
 	"github.com/joho/godotenv"
 )
@@ -27,14 +27,14 @@ func GetStruct(cfgStruct interface{}) error {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		key := field.Tag.Get("env")
-		def := field.Tag.Get("def")
+		key := field.Tag.Get("envkey")
+		def := field.Tag.Get("envdef")
 		
 		env := Get(key, def)
 
-		value, err := typeconv.Str2Type(env, field.Type)
+		value, err := typeconv.Str2Any(env, field.Type.Kind())
 		if err != nil {
-			logger.Fatalf("getenv: Unsupport type '%v'", reflect.TypeOf(env))
+			return fmt.Errorf("getenv: Unsupport type '%v'", reflect.TypeOf(env).Kind())
 		}
 
 		if reflect.TypeOf(value) != field.Type {
