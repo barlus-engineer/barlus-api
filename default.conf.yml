@@ -1,6 +1,0 @@
-name: "Barlus Server API"
-version: "1.0 dev mode"
-server:
-  host: localhost
-  port: 3250
-  release: false

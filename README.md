@@ -14,3 +14,14 @@ Barlus API is a backend service for barlus website
 ```sh
 git clone https://github.com/barlus-engineer/barlus-api.git
 cd barlus-api
+```
+
+### Environment Variables
+```
+SERVER_NAME=[ server name ]
+SERVER_VERSION=[ server version ]
+SERVER_RELEASE=[ true or false ]
+
+HTTP_HOST=[ http host ]
+HTTP_PORT=[ http port ]
+```

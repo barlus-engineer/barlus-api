@@ -3,12 +3,12 @@ package text
 import "errors"
 
 var (
-	ErrDotenvLoad          = errors.New("dotenv: Error loading .env, using only system env")
-	
-	ErrGetenvUnsupportType = errors.New("getenv: unsuported type '%v'")
+	ErrDotenvLoad = errors.New("dotenv: Error loading .env, using only system env")
+
+	ErrGetenvErrConvType = errors.New("getenv: field '%s', Error %v")
+	ErrGetenvUnsupportType = errors.New("getenv: field '%s', unsuported type '%v'")
 
 	ErrTypeConvUnsupportType = errors.New("typeconv: unsupported type")
-	
-	ErrReadConfigFile      = errors.New("config: error reading config file")
-	ErrDecodeConfig        = errors.New("config: error decoding into struct")
+
+	ErrConfigGetenv = errors.New("config: error getting env:\n%v")
 )

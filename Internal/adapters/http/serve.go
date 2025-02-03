@@ -12,11 +12,11 @@ import (
 func RunHTTPServe() {
 	var (
 		cfg = config.GetConfig()
-		serverAddr = fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+		serverAddr = fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port)
 		serve *gin.Engine
 	)
 	
-	if cfg.Server.Release {
+	if cfg.Release {
 		gin.SetMode(gin.ReleaseMode)
 		serve = gin.New()
 	} else {

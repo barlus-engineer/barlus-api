@@ -44,7 +44,10 @@ func GetStruct(cfgStruct interface{}) error {
 
 				value2, err := typeconv.Str2Any(env2, field2.Type.Kind())
 				if err != nil {
-					return fmt.Errorf(text.ErrGetenvUnsupportType.Error(), reflect.TypeOf(env2).Kind())
+					if err != text.ErrGetenvUnsupportType {
+						return fmt.Errorf(text.ErrGetenvErrConvType.Error(), field.Name, err)
+					}
+					return fmt.Errorf(text.ErrGetenvUnsupportType.Error(), field.Name, reflect.TypeOf(env2).Kind())
 				}
 
 				if reflect.TypeOf(value2) != field2.Type {
@@ -63,7 +66,9 @@ func GetStruct(cfgStruct interface{}) error {
 
 		value, err := typeconv.Str2Any(env, field.Type.Kind())
 		if err != nil {
-			fmt.Println(err)
+			if err != text.ErrGetenvUnsupportType {
+				return fmt.Errorf("getenv: field '%s', Error %v", field.Name, err)
+			}
 			return fmt.Errorf(text.ErrGetenvUnsupportType.Error(), reflect.TypeOf(env).Kind())
 		}
 
