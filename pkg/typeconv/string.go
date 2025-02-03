@@ -1,6 +1,7 @@
 package typeconv
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 
@@ -20,6 +21,10 @@ func Str2Any(value string, t interface{}) (interface{}, error) {
 		default:
 			return nil, text.ErrTypeConvUnsupportType
 	}
+}
+
+func Any2Str(value any) string {
+	return fmt.Sprint(value)
 }
 
 // ====
