@@ -9,7 +9,7 @@ import (
 var config ConfigStrc
 
 type ConfigStrc struct {
-	Name    string `env:"SERVER_NAME" def:"Barlus API"`
+	Name    string `envkey:"SERVER_NAME" envdef:"Barlus API"`
 	Version string `envkey:"SERVER_VERSION" envdef:"1.0 dev"`
 	Release bool   `envkey:"SERVER_RELEASE" envdef:"false"`
 	HTTP  struct {
