@@ -6,6 +6,7 @@ var (
 	ErrDotenvLoad = errors.New("dotenv: Error loading .env, using only system env")
 
 	ErrGetenvErrConvType = errors.New("getenv: field '%s', Error %v")
+	ErrGetenvIsnotStruct = errors.New("getenv: expected a pointer to a struct")
 	ErrGetenvUnsupportType = errors.New("getenv: field '%s', unsuported type '%v'")
 
 	ErrTypeConvUnsupportType = errors.New("typeconv: unsupported type")

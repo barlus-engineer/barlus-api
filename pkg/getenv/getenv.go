@@ -27,6 +27,9 @@ func Get(key string, deValue string) string {
 
 func GetStruct(cfgStruct interface{}) error {
 	v := reflect.ValueOf(cfgStruct).Elem()
+	if v.Type().Kind() != reflect.Struct {
+		return text.ErrGetenvIsnotStruct
+	}
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
