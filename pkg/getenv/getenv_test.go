@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/barlus-engineer/barlus-api/pkg/getenv"
+	"github.com/barlus-engineer/barlus-api/pkg/setenv"
 )
 
 func TestGet(t *testing.T) {
@@ -54,22 +55,17 @@ func TestGetStructDefault(t *testing.T) {
 	}
 }
 
-// func TestGetStruct(t *testing.T) {
-// 	var user DataTest
-// 	if err := getenv.GetStruct(&user); err != nil {
-// 		t.Error(err)
-// 	}
-// 	if user != UserExpected {
-// 		t.Errorf("Expected %+v, but got %+v", DefaultUserExpected, user)
-// 	}
-// }
+func TestGetStruct(t *testing.T) {
+	var user DataTest
 
-// func TestGetStruct(t *testing.T) {
-// 	var user DataTest
-// 	if err := getenv.GetStruct(&user); err != nil {
-// 		t.Error(err)
-// 	}
-// 	if user != UserExpected {
-// 		t.Errorf("Expected %+v, but got %+v", DefaultUserExpected, user)
-// 	}
-// }
+	setenv.Set("TEST_GETENV_NAME", "Mouk")
+	setenv.Set("TEST_GETENV_AGE", 14)
+	setenv.Set("TEST_GETENV_SCORE", 3.7)
+
+	if err := getenv.GetStruct(&user); err != nil {
+		t.Error(err)
+	}
+	if user != UserExpected {
+		t.Errorf("Expected %+v, but got %+v", UserExpected, user)
+	}
+}
