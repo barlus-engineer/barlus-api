@@ -1,11 +1,14 @@
 package typeconv
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
+)
 
-	"github.com/barlus-engineer/barlus-api/pkg/text"
+var (
+	ErrConvUnsupportType = errors.New("typeconv: unsupported type")
 )
 
 func Str2Any(value string, t interface{}) (interface{}, error) {
@@ -19,7 +22,7 @@ func Str2Any(value string, t interface{}) (interface{}, error) {
 		case reflect.Bool:
 			return str2Bool(value)
 		default:
-			return nil, text.ErrTypeConvUnsupportType
+			return nil, ErrConvUnsupportType
 	}
 }
 

@@ -1,12 +1,17 @@
 package config
 
 import (
+	"errors"
+
 	"github.com/barlus-engineer/barlus-api/pkg/getenv"
 	"github.com/barlus-engineer/barlus-api/pkg/logger"
-	"github.com/barlus-engineer/barlus-api/pkg/text"
 )
 
-var config ConfigStrc
+var (
+	config ConfigStrc
+
+	ErrGetenv = errors.New("config: error getting env:\n%v")
+)
 
 type ConfigStrc struct {
 	Name    string `envkey:"SERVER_NAME" envdef:"Barlus API"`
@@ -27,7 +32,7 @@ func LoadConfig() error {
 	)
 
 	if err := getenv.GetStruct(&cfg); err != nil {
-		logger.Crashf(text.ErrConfigGetenv.Error(), err)
+		logger.Crashf(ErrGetenv.Error(), err)
 	}
 
 	config = cfg
