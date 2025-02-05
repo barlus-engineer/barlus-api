@@ -24,4 +24,6 @@ SERVER_RELEASE=[ true or false ]
 
 HTTP_HOST=[ http host ]
 HTTP_PORT=[ http port ]
+
+REDIS_URL=[ your redis url ]
 ```
