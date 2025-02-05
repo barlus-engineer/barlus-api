@@ -11,11 +11,11 @@ import (
 
 func RunHTTPServe() {
 	var (
-		cfg = config.GetConfig()
+		cfg        = config.GetConfig()
 		serverAddr = fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port)
-		serve *gin.Engine
+		serve      *gin.Engine
 	)
-	
+
 	if cfg.Release {
 		gin.SetMode(gin.ReleaseMode)
 		serve = gin.New()
@@ -27,5 +27,7 @@ func RunHTTPServe() {
 	router.Route(serve)
 
 	logger.Info("HTTP server is starting on: ", serverAddr)
-	serve.Run(serverAddr)
+	if err := serve.Run(serverAddr); err != nil {
+		logger.Crash(err)
+	}
 }

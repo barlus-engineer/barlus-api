@@ -19,6 +19,6 @@ func main() {
 
 func LoadResource() {
 	if err := config.LoadConfig(); err != nil {
-		logger.Fatal(err)
+		logger.Crash(err)
 	}
 }

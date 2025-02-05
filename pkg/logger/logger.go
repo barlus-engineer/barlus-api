@@ -6,9 +6,10 @@ package logger
 
 import (
 	"fmt"
-	"github.com/barlus-engineer/barlus-api/pkg/colors"
 	"os"
 	"time"
+
+	"github.com/barlus-engineer/barlus-api/pkg/colors"
 )
 
 /*
@@ -62,7 +63,7 @@ func Salert(values ...any) string {
 	return result
 }
 
-// sFatal generates a string formatted for fatal logging.
+// sCrash generates a string formatted for fatal logging.
 // It includes a timestamp, "Crash" label, and color-coded output.
 //
 // Parameters:
@@ -70,7 +71,7 @@ func Salert(values ...any) string {
 //
 // Returns:
 // - A string formatted for fatal logging.
-func sFatal(values ...any) string {
+func sCrash(values ...any) string {
 	value := ValuesJoin(values...)
 	currentTime := time.Now().Format("2006/01/02 15:04:05")
 	result := fmt.Sprintf("%s [%scrash%s] %s", currentTime, colors.Red, colors.Reset, value)
@@ -89,7 +90,8 @@ func sFatal(values ...any) string {
 // - values: A variadic parameter containing the values to log.
 //
 // Example:
-//    logger.Info("Server started successfully")
+//
+//	logger.Info("Server started successfully")
 func Info(values ...any) {
 	text := Sinfo(values...)
 	fmt.Println(text)
@@ -101,7 +103,8 @@ func Info(values ...any) {
 // - values: A variadic parameter containing the values to log.
 //
 // Example:
-//    logger.Warning("Memory usage is high")
+//
+//	logger.Warning("Memory usage is high")
 func Warning(values ...any) {
 	text := Swarning(values...)
 	fmt.Println(text)
@@ -113,7 +116,8 @@ func Warning(values ...any) {
 // - values: A variadic parameter containing the values to log.
 //
 // Example:
-//    logger.Alert("Database connection lost")
+//
+//	logger.Alert("Database connection lost")
 func Alert(values ...any) {
 	text := Salert(values...)
 	fmt.Println(text)
@@ -125,9 +129,10 @@ func Alert(values ...any) {
 // - values: A variadic parameter containing the values to log.
 //
 // Example:
-//    logger.Fatal("Unable to connect to database")
-func Fatal(values ...any) {
-	text := sFatal(values...)
+//
+//	logger.Crash("Unable to connect to database")
+func Crash(values ...any) {
+	text := sCrash(values...)
 	fmt.Println(text)
 	os.Exit(1)
 }
@@ -186,7 +191,7 @@ func Salertf(text string, values ...any) string {
 	return result
 }
 
-// sFatalf generates a formatted string for fatal logging.
+// sCrashf generates a formatted string for fatal logging.
 // It includes a timestamp, "Crash" label, and color-coded output.
 //
 // Parameters:
@@ -195,7 +200,7 @@ func Salertf(text string, values ...any) string {
 //
 // Returns:
 // - A formatted string for fatal logging.
-func sFatalf(text string, values ...any) string {
+func sCrashf(text string, values ...any) string {
 	value := ValuesJoinf(text, values...)
 	currentTime := time.Now().Format("2006/01/02 15:04:05")
 	result := fmt.Sprintf("%s [%scrash%s] %s", currentTime, colors.Red, colors.Reset, value)
@@ -209,7 +214,8 @@ func sFatalf(text string, values ...any) string {
 // - values: A variadic parameter containing arguments to replace placeholders in the format string.
 //
 // Example:
-//    logger.Infof("Server started on port %d", port)
+//
+//	logger.Infof("Server started on port %d", port)
 func Infof(text string, values ...any) {
 	result := Sinfof(text, values...)
 	fmt.Println(result)
@@ -222,7 +228,8 @@ func Infof(text string, values ...any) {
 // - values: A variadic parameter containing arguments to replace placeholders in the format string.
 //
 // Example:
-//    logger.Warningf("Memory usage is at %d%%", usage)
+//
+//	logger.Warningf("Memory usage is at %d%%", usage)
 func Warningf(text string, values ...any) {
 	result := Swarningf(text, values...)
 	fmt.Println(result)
@@ -235,7 +242,8 @@ func Warningf(text string, values ...any) {
 // - values: A variadic parameter containing arguments to replace placeholders in the format string.
 //
 // Example:
-//    logger.Alertf("Database connection lost: %s", err.Error())
+//
+//	logger.Alertf("Database connection lost: %s", err.Error())
 func Alertf(text string, values ...any) {
 	result := Salertf(text, values...)
 	fmt.Println(result)
@@ -248,9 +256,10 @@ func Alertf(text string, values ...any) {
 // - values: A variadic parameter containing arguments to replace placeholders in the format string.
 //
 // Example:
-//    logger.Fatalf("Failed to load configuration: %s", err.Error())
-func Fatalf(text string, values ...any) {
-	result := sFatalf(text, values...)
+//
+//	logger.Crashf("Failed to load configuration: %s", err.Error())
+func Crashf(text string, values ...any) {
+	result := sCrashf(text, values...)
 	fmt.Println(result)
 	os.Exit(1)
 }
