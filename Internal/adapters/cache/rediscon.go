@@ -25,3 +25,7 @@ func RedisConnect() error {
 
 	return nil
 }
+
+func GetRedis() *redis.Client {
+	return Redis
+}
