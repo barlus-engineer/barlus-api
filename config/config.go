@@ -16,6 +16,9 @@ type ConfigStrc struct {
 		Host string `envkey:"HTTP_HOST" envdef:"localhost"`
 		Port int    `envkey:"HTTP_PORT" envdef:"3250"`
 	}
+	Cache struct {
+		RedisURL string `envkey:"REDIS_URL"`
+	}
 }
 
 func LoadConfig() error {

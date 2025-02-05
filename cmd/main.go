@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/barlus-engineer/barlus-api/Internal/adapters/cache"
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/http"
 	"github.com/barlus-engineer/barlus-api/config"
 	"github.com/barlus-engineer/barlus-api/pkg/logger"
@@ -19,6 +20,12 @@ func main() {
 
 func LoadResource() {
 	if err := config.LoadConfig(); err != nil {
-		logger.Crash(err)
+		logger.Crashf("config: %v", err)
 	}
+	logger.Info("Config loaded successfully")
+
+	if err := cache.RedisConnect(); err != nil {
+		logger.Crashf("redis: %v", err)
+	}
+	logger.Info("Connected to Redis successfully")
 }
