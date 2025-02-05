@@ -1,17 +1,21 @@
 package getenv
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
 
-	"github.com/barlus-engineer/barlus-api/pkg/text"
 	"github.com/barlus-engineer/barlus-api/pkg/typeconv"
 	"github.com/joho/godotenv"
 )
 
 var (
 	Default = ""
+
+	ErrConvType = errors.New("getenv: field '%s', Error %v")
+	ErrItsnotStruct = errors.New("getenv: expected a pointer to a struct")
+	ErrUnsupportType = errors.New("getenv: field '%s', unsuported type '%v'")
 )
 
 func Get(key string, deValue string) string {
@@ -28,7 +32,7 @@ func Get(key string, deValue string) string {
 func GetStruct(cfgStruct interface{}) error {
 	v := reflect.ValueOf(cfgStruct).Elem()
 	if v.Type().Kind() != reflect.Struct {
-		return text.ErrGetenvIsnotStruct
+		return ErrItsnotStruct
 	}
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
@@ -47,10 +51,10 @@ func GetStruct(cfgStruct interface{}) error {
 
 				value2, err := typeconv.Str2Any(env2, field2.Type.Kind())
 				if err != nil {
-					if err != text.ErrGetenvUnsupportType {
-						return fmt.Errorf(text.ErrGetenvErrConvType.Error(), field.Name, err)
+					if err != ErrUnsupportType {
+						return fmt.Errorf(ErrConvType.Error(), field.Name, err)
 					}
-					return fmt.Errorf(text.ErrGetenvUnsupportType.Error(), field.Name, reflect.TypeOf(env2).Kind())
+					return fmt.Errorf(ErrUnsupportType.Error(), field.Name, reflect.TypeOf(env2).Kind())
 				}
 
 				if reflect.TypeOf(value2) != field2.Type {
@@ -69,10 +73,10 @@ func GetStruct(cfgStruct interface{}) error {
 
 		value, err := typeconv.Str2Any(env, field.Type.Kind())
 		if err != nil {
-			if err != text.ErrGetenvUnsupportType {
+			if err != ErrUnsupportType {
 				return fmt.Errorf("getenv: field '%s', Error %v", field.Name, err)
 			}
-			return fmt.Errorf(text.ErrGetenvUnsupportType.Error(), reflect.TypeOf(env).Kind())
+			return fmt.Errorf(ErrUnsupportType.Error(), reflect.TypeOf(env).Kind())
 		}
 
 		if reflect.TypeOf(value) != field.Type {
