@@ -15,7 +15,7 @@ var (
 
 type ConfigStrc struct {
 	Name    string `envkey:"SERVER_NAME" envdef:"Barlus API"`
-	Version string `envkey:"SERVER_VERSION" envdef:"1.0 dev"`
+	Version string `envkey:"SERVER_VERSION" envdef:"v0.1.1"`
 	Release bool   `envkey:"SERVER_RELEASE" envdef:"false"`
 	HTTP    struct {
 		Host string `envkey:"HTTP_HOST" envdef:"localhost"`

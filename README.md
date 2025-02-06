@@ -8,7 +8,9 @@ Barlus API is a backend service for barlus website
 ## Installation
 
 ### Prerequisites
-- Go 1.23+
+- **Go**: version **1.18**+
+- **PostgreSQL**: version **10**+
+- **Redis**: version **9**
 
 ### Clone the repository
 ```sh
@@ -18,12 +20,14 @@ cd barlus-api
 
 ### Environment Variables
 ```
-SERVER_NAME=[ server name ]
-SERVER_VERSION=[ server version ]
-SERVER_RELEASE=[ true or false ]
+SERVER_NAME=[server name] # default (Barlus API)
+SERVER_VERSION=[server version] # default (v0.1.1)
+SERVER_RELEASE=[true or false] # default (false)
 
-HTTP_HOST=[ http host ]
-HTTP_PORT=[ http port ]
+HTTP_HOST=[http host]
+HTTP_PORT=[http port]
 
-REDIS_URL=[ your redis url ]
+POSTGRES_URL=[Postgres url]
+
+REDIS_URL=[your redis url]
 ```
