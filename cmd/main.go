@@ -34,4 +34,7 @@ func LoadResource() {
 		logger.Crashf("postgres: %v", err)
 	}
 	logger.Info("Connected to Database successfully")
+
+	database.MigrateDatabase()
+	logger.Info("Database migrated successfully")
 }
