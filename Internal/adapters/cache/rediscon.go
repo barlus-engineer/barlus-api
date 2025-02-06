@@ -7,7 +7,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var Redis *redis.Client
+var redisClient *redis.Client
 
 func RedisConnect() error {
 	var (
@@ -21,11 +21,11 @@ func RedisConnect() error {
 	if err := redis.NewClient(opts).Ping(ctx).Err(); err != nil {
 		return err
 	}
-	Redis = redis.NewClient(opts)
+	redisClient = redis.NewClient(opts)
 
 	return nil
 }
 
 func GetRedis() *redis.Client {
-	return Redis
+	return redisClient
 }

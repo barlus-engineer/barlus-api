@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/cache"
+	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/http"
 	"github.com/barlus-engineer/barlus-api/config"
 	"github.com/barlus-engineer/barlus-api/pkg/logger"
@@ -28,4 +29,9 @@ func LoadResource() {
 		logger.Crashf("redis: %v", err)
 	}
 	logger.Info("Connected to Redis successfully")
+
+	if err := database.PostgresConnect(); err != nil {
+		logger.Crashf("postgres: %v", err)
+	}
+	logger.Info("Connected to Database successfully")
 }
