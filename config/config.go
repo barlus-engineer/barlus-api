@@ -24,6 +24,9 @@ type ConfigStrc struct {
 	Cache struct {
 		RedisURL string `envkey:"REDIS_URL"`
 	}
+	Database struct {
+		Postgres string `envkey:"POSTGRES_URL"`
+	}
 }
 
 func LoadConfig() error {
