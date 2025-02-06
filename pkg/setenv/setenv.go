@@ -23,7 +23,7 @@ func Set(key string, value any) error {
 }
 
 func SetStruct(cfgStruct interface{}) error {
-	v := reflect.ValueOf(cfgStruct).Elem()
+	v := reflect.ValueOf(cfgStruct)
 	if v.Type().Kind() != reflect.Struct {
 		return ErrItsnotStruct
 	}
