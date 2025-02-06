@@ -25,7 +25,7 @@ type ConfigStrc struct {
 		RedisURL string `envkey:"REDIS_URL"`
 	}
 	Database struct {
-		Postgres string `envkey:"POSTGRES_URL"`
+		PostgresURL string `envkey:"POSTGRES_URL"`
 	}
 }
 
