@@ -6,23 +6,23 @@ import (
 	"gorm.io/gorm"
 )
 
-var dbClient *gorm.DB
+var db *gorm.DB
 
 func PostgresConnect() error {
 	var (
+		err error
 		cfg = config.GetConfig()
 		dns = cfg.Database.PostgresURL
 	)
-	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+	
+	db, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
 		return err
 	}
-	
-	dbClient = db
 
 	return nil
 }
 
 func GetDatabase() *gorm.DB {
-	return dbClient
+	return db
 }
