@@ -58,9 +58,7 @@ func TestGetStructDefault(t *testing.T) {
 func TestGetStruct(t *testing.T) {
 	var user DataTest
 
-	setenv.Set("TEST_GETENV_NAME", "Mouk")
-	setenv.Set("TEST_GETENV_AGE", 14)
-	setenv.Set("TEST_GETENV_SCORE", 3.7)
+	setenv.SetStruct(UserExpected)
 
 	if err := getenv.GetStruct(&user); err != nil {
 		t.Error(err)
