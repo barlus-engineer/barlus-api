@@ -1,4 +1,4 @@
-# Barlus API - Dev version
+# Barlus API - v0.1.1
 
 [![GitHub license](https://img.shields.io/github/license/barlus-engineer/barlus-api)](https://github.com/barlus-engineer/barlus-api/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/barlus-engineer/barlus-api)](https://github.com/barlus-engineer/barlus-api/stargazers)
