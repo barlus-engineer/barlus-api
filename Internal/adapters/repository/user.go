@@ -6,7 +6,7 @@ import (
 
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
-	"github.com/barlus-engineer/barlus-api/pkg/cleantext"
+	"github.com/barlus-engineer/barlus-api/pkg/text"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -25,7 +25,7 @@ func (p User) Create() error {
 
 		name = strings.TrimSpace(p.Name)
 		email = strings.TrimSpace(p.Email)
-		cleanEmail = cleantext.SpecialChar(email)
+		cleanEmail = text.CleanEmail(email)
 		password = strings.TrimSpace(p.Password)
 	)
 
