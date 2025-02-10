@@ -1,50 +1,48 @@
 package repository
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
+	"github.com/barlus-engineer/barlus-api/Internal/adapters/cache"
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
-	"github.com/barlus-engineer/barlus-api/pkg/text"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
-type User model.User
+type User  struct {
+	data model.User
+}
 
 var (
 	ErrUnableCreateUser = errors.New("unable to create user")
+	ErrUnableGetUser = errors.New("unable to get user")
 	ErrUserExists = errors.New("user already exists")
+	ErrNoUser = errors.New("user dose not exists")
+
+	ErrEncodeJson = errors.New("unable to encode data to JSON")
+	ErrDecodeJson = errors.New("unable to decode JSON to data")
 )
 
 func (p User) Create() error {
 	var (
-		userModel model.User
+		ctx = context.Background()
 		db = database.GetDatabase()
-
-		name = strings.TrimSpace(p.Name)
-		email = strings.TrimSpace(p.Email)
-		cleanEmail = text.CleanEmail(email)
-		password = strings.TrimSpace(p.Password)
+		err error
 	)
 
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-
-	err = db.Where("email = ?", cleanEmail).First(&userModel).Error
+	err = db.Where("email = ?", p.data.Email).Error
 
 	if err != nil && err == gorm.ErrRecordNotFound {
-		userModel = model.User{
-			Name: name,
-			Email: cleanEmail,
-			Password: string(hashPassword),
-		}
-	
-		if err = db.Create(userModel).Error; err != nil {
+		if err = db.Create(p.data).Error; err != nil {
 			return ErrUnableCreateUser
+		}
+
+		if err := setUserCache(ctx, p.data); err != nil {
+			return err
 		}
 
 		return nil
@@ -54,4 +52,85 @@ func (p User) Create() error {
 	}
 
 	return err
+}
+
+func (p User) GetbyUsername() error {
+	var (
+		ctx = context.Background()
+		db = database.GetDatabase()
+
+		username = strings.TrimSpace(p.data.Username)
+	)
+
+	if err := getUserCachebyUsername(ctx, &p.data); err != nil {
+		if err == cache.ErrNotFound {
+			return ErrNoUser
+		}
+		if err = db.Where("username = ?", username).First(&p.data).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				setUserCacheNoData(ctx, p.data)
+			}
+			return ErrUnableGetUser
+		}
+	}
+
+	return nil
+}
+
+// =========== Lib ============
+
+func setUserCache(ctx context.Context, user model.User) error {
+	var (
+		keyname = fmt.Sprintf("user:%s", user.Username)
+		keyid = fmt.Sprintf("userid:%d", user.ID)
+	)
+
+	data, err := json.Marshal(user)
+	if err != nil {
+		return ErrEncodeJson
+	}
+
+	if err = cache.Set(ctx, keyname, string(data)); err != nil {
+		return err
+	}
+	if err = cache.Set(ctx, keyid, string(data)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setUserCacheNoData(ctx context.Context, user model.User) error {
+	var (
+		keyname = fmt.Sprintf("user:%s", user.Username)
+		keyid = fmt.Sprintf("userid:%d", user.ID)
+	)
+
+	if err := cache.SetNoData(ctx, keyname); err != nil {
+		return err
+	}
+	if err := cache.SetNoData(ctx, keyid); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getUserCachebyUsername(ctx context.Context, user *model.User) error {
+	var (
+		key = fmt.Sprintf("user:%s", user.Username)
+	)
+	data, err := cache.Get(ctx, key)
+	if err != nil {
+		return err
+	}
+
+	var cachedUser model.User
+	if err := json.Unmarshal([]byte(data), &cachedUser); err != nil {
+		return ErrDecodeJson
+	}
+
+	*user = cachedUser
+
+	return nil
 }
