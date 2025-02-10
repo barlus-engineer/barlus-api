@@ -14,7 +14,7 @@ import (
 )
 
 type User  struct {
-	data model.User
+	Data model.User
 }
 
 var (
@@ -27,23 +27,33 @@ var (
 	ErrDecodeJson = errors.New("unable to decode JSON to data")
 )
 
+func (p *User) AddData(data model.User) {
+	p.Data = data
+}
+
 func (p User) Create() error {
 	var (
 		ctx = context.Background()
 		db = database.GetDatabase()
+
+		userModel model.User
+
 		err error
 	)
 
-	err = db.Where("email = ?", p.data.Email).Error
-
-	if err != nil && err == gorm.ErrRecordNotFound {
-		if err = db.Create(p.data).Error; err != nil {
+	err = db.Where("email = ?", p.Data.Email).First(&userModel).Error
+	
+	if err == gorm.ErrRecordNotFound {
+		userModel = p.Data
+		if err = db.Create(&userModel).Error; err != nil {
 			return ErrUnableCreateUser
 		}
 
-		if err := setUserCache(ctx, p.data); err != nil {
+		if err := setUserCache(ctx, userModel); err != nil {
 			return err
 		}
+
+		p.AddData(userModel)
 
 		return nil
 	}
@@ -59,16 +69,16 @@ func (p User) GetbyUsername() error {
 		ctx = context.Background()
 		db = database.GetDatabase()
 
-		username = strings.TrimSpace(p.data.Username)
+		username = strings.TrimSpace(p.Data.Username)
 	)
 
-	if err := getUserCachebyUsername(ctx, &p.data); err != nil {
+	if err := getUserCachebyUsername(ctx, &p.Data); err != nil {
 		if err == cache.ErrNotFound {
 			return ErrNoUser
 		}
-		if err = db.Where("username = ?", username).First(&p.data).Error; err != nil {
+		if err = db.Where("username = ?", username).First(&p.Data).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
-				setUserCacheNoData(ctx, p.data)
+				setUserCacheNoData(ctx, p.Data)
 			}
 			return ErrUnableGetUser
 		}

@@ -23,7 +23,7 @@ type ConfigStrc struct {
 	}
 	Cache struct {
 		RedisURL string `envkey:"REDIS_URL"`
-		CacheTime int `envkey:"CACHE_TIME" envdef:"1hr"`
+		CacheTime int `envkey:"CACHE_TIME" envdef:"1"`
 	}
 	Database struct {
 		PostgresURL string `envkey:"POSTGRES_URL"`
