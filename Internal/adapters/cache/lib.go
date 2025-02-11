@@ -37,13 +37,13 @@ func Set(ctx context.Context, key string, data string) error {
 
 func Get(ctx context.Context, key string) (string, error) {
 	data, err := redisClient.Get(ctx, key).Result()
+	if err == redis.Nil {
+		return "", ErrCacheMiss
+	}
 
 	status := data[:3]
 	value := data[3:]
 
-	if err == redis.Nil {
-		return "", ErrCacheMiss
-	}
 	if status == noDataInDatabase {
 		return "", ErrNotFound
 	}
@@ -57,7 +57,7 @@ func Del(ctx context.Context, key string) error {
 	return nil
 }
 
-func SetNoData(ctx context.Context, key string) error {
+func SetNotfound(ctx context.Context, key string) error {
 	var (
 		cfg = config.GetConfig()
 		cacheTime = time.Duration(cfg.Cache.CacheTime) * time.Minute

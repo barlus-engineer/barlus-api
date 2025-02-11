@@ -1,28 +1,24 @@
 package services
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/repository"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
+	"github.com/barlus-engineer/barlus-api/Internal/dto"
 	"github.com/barlus-engineer/barlus-api/pkg/text"
 )
 
 type User struct {
-	Data model.User
+	Data    model.User
 }
 
-type UserForm struct {
-	Name     string
-	Nickname string
-	Bio      string
-	Username string
-	Email    string
-	Password string
-}
+func (p User) Register(data dto.UserRegisterForm) error {
+	var (
+		userRepo repository.User
+		err      error
+	)
 
-func (p *User) AddData(data model.User) {
 	n_name := strings.TrimSpace(data.Name)
 	n_nickname := strings.TrimSpace(data.Nickname)
 	n_username := text.CleanUsername(strings.TrimSpace(data.Username))
@@ -37,15 +33,7 @@ func (p *User) AddData(data model.User) {
 		Email:    n_email,
 		Password: n_password,
 	}
-}
 
-func (p User) Register() error {
-	var (
-		userRepo repository.User
-		err error
-	)
-
-	fmt.Println(p.Data)
 	userRepo.AddData(p.Data)
 
 	if err = userRepo.Create(); err != nil {
@@ -56,4 +44,3 @@ func (p User) Register() error {
 }
 
 // === lib ===
-

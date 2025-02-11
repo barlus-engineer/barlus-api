@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/repository"
-	"github.com/barlus-engineer/barlus-api/Internal/core/model"
 	"github.com/barlus-engineer/barlus-api/Internal/core/services"
+	"github.com/barlus-engineer/barlus-api/Internal/dto"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,22 +15,21 @@ var (
 
 type Authen struct {
 	svc  services.User
-	form model.User
+	regForm dto.UserRegisterForm
 }
 
 func (p Authen) Register(c *gin.Context) {
 	var (
 		err error
 	)
-	if err = c.ShouldBindBodyWithJSON(&p.form); err != nil {
+	if err = c.ShouldBindBodyWithJSON(&p.regForm); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": TextErrShouldBindBodyWithJSON,
 		})
 		return
 	}
-	p.svc.AddData(p.form)
-	if err = p.svc.Register(); err != nil {
-		errorHandler(c, err)
+	if err = p.svc.Register(p.regForm); err != nil {
+		registerErrorHandler(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
@@ -38,13 +37,15 @@ func (p Authen) Register(c *gin.Context) {
 	})
 }
 
-func errorHandler(c *gin.Context, err error) {
+func registerErrorHandler(c *gin.Context, err error) {
 	switch err {
 		case repository.ErrUnableCreateUser:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": repository.ErrUnableCreateUser.Error()})
 		case repository.ErrUserExists:
 			c.JSON(http.StatusBadRequest, gin.H{"error": repository.ErrUserExists.Error()})
+		case repository.ErrUserEmailExists:
+			c.JSON(http.StatusBadRequest, gin.H{"error": repository.ErrUserEmailExists.Error()})
 		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 }
