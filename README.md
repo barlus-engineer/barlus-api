@@ -27,7 +27,8 @@ SERVER_RELEASE=[true or false] # default (false)
 HTTP_HOST=[http host]
 HTTP_PORT=[http port]
 
-POSTGRES_URL=[Postgres url]
-
 REDIS_URL=[your redis url]
+CACHE_TIME=60 # default 60mn
+
+POSTGRES_URL=[Postgres url]
 ```
