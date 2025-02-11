@@ -7,12 +7,21 @@ import (
 )
 
 func TestCleanEmail(t *testing.T) {
-	data := "Barluscuda@gmail.com /(+=-)"
-	excepted := "barluscuda@gmail.com"
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"Barluscuda@gmail.com /(+=-)", "barluscuda@gmail.com"},
+		{"Example@Domain.com", "example@domain.com"},
+		{"Test.Email+123@Example.com", "test.email123@example.com"},
+		{"UserName!@Example.com", "username@example.com"},
+		{"User Name@Example.com", "username@example.com"},
+	}
 
-	result := text.CleanEmail(data)
-
-	if result != excepted {
-		t.Errorf("expected %s but got %s", excepted, result)
+	for _, test := range tests {
+		result := text.CleanEmail(test.input)
+		if result != test.expected {
+			t.Errorf("CleanEmail(%q) = %q; want %q", test.input, result, test.expected)
+		}
 	}
 }
