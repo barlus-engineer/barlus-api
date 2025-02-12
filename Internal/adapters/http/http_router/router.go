@@ -19,7 +19,7 @@ func Route(api *gin.Engine) {
 		userRepo.AddDatabase(db)
 		userService := services.NewUserService(userRepo)
 		authHandler :=  http_handler.AuthHandler{}.NewAuthenHandler(*userService)
-		
+
 		auth.POST("/register", authHandler.Register)
 	}
 }

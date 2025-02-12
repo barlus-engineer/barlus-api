@@ -1,6 +1,6 @@
 package dto
 
-type UserRegisterForm struct {
+type UserRegisterRequest struct {
 	Name     string `json:"name"`
 	Nickname string `json:"nickname"`
 	Bio      string `json:"bio"`
@@ -8,4 +8,8 @@ type UserRegisterForm struct {
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type UserUsernameAvailRequest struct {
+	Username string `json:"username" binding:"required"`
 }

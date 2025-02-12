@@ -30,8 +30,8 @@ func LoadResource() {
 	}
 	logger.Info("Connected to Redis successfully")
 
-	if err := database.PostgresConnect(); err != nil {
-		logger.Crashf("postgres: %v", err)
+	if err := database.DatabaseConnect(); err != nil {
+		logger.Crashf("database: %v", err)
 	}
 	logger.Info("Connected to Database successfully")
 

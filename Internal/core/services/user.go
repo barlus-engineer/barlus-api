@@ -3,7 +3,6 @@ package services
 import (
 	"strings"
 
-	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
 	"github.com/barlus-engineer/barlus-api/Internal/dto"
 	"github.com/barlus-engineer/barlus-api/Internal/ports"
@@ -21,10 +20,13 @@ func  NewUserService(repo ports.UserRepo) *UserService {
 	}
 }
 
-func (p UserService) Register(data dto.UserRegisterForm) error {
+func (p *UserService) AddData(data model.User) {
+	p.Data = data
+}
+
+func (p UserService) Register(data dto.UserRegisterRequest) error {
 	var (
-		Database = database.GetDatabase()
-		err      error
+		err error
 	)
 
 	n_name := strings.TrimSpace(data.Name)
@@ -42,14 +44,27 @@ func (p UserService) Register(data dto.UserRegisterForm) error {
 		Password: n_password,
 	}
 
-	p.Repo.AddDatabase(Database)
-	p.Repo.AddData(p.Data)
-
-	if err = p.Repo.Create(); err != nil {
+	if err = p.Repo.AddData(p.Data).Create().Error(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// === lib ===
+func (p *UserService) UsernameAvail(data dto.UserUsernameAvailRequest) error {
+	var (
+		err error
+	)
+
+	n_username := text.CleanUsername(strings.TrimSpace(data.Username))
+
+	p.Data = model.User{
+		Username: n_username,
+	}
+
+	if err = p.Repo.AddData(p.Data).GetbyUsername().ReturnData(&p.Data).Error(); err != nil {
+		return err
+	}
+
+	return nil
+}

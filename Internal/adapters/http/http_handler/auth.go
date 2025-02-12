@@ -15,7 +15,7 @@ var (
 
 type AuthHandler struct {
 	svc services.UserService
-	regForm dto.UserRegisterForm
+	regForm dto.UserRegisterRequest
 }
 
 func (p AuthHandler) NewAuthenHandler(userService services.UserService) *AuthHandler {

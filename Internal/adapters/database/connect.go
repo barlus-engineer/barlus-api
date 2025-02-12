@@ -9,7 +9,7 @@ import (
 
 var db *gorm.DB
 
-func PostgresConnect() error {
+func DatabaseConnect() error {
 	var (
 		err error
 		cfg = config.GetConfig()

@@ -13,6 +13,7 @@ import (
 type UserRepo struct {
 	Database gorm.DB
 	Data     model.User
+	err      error
 }
 
 var (
@@ -30,15 +31,26 @@ var (
 	logUnableGetUserbyEmail    = "repo/user (get by email[%s]): %s"
 )
 
-func (p *UserRepo) AddDatabase(database *gorm.DB) {
+func (p *UserRepo) AddDatabase(database *gorm.DB) UserRepo {
 	p.Database = *database
+	return *p
 }
 
-func (p *UserRepo) AddData(data model.User) {
+func (p *UserRepo) AddData(data model.User) UserRepo {
 	p.Data = data
+	return *p
 }
 
-func (p UserRepo) Create() error {
+func (p UserRepo) Error() error {
+	return p.err
+}
+
+func (p UserRepo) ReturnData(userModel *model.User) UserRepo {
+	*userModel = p.Data
+	return p
+}
+
+func (p UserRepo) Create() UserRepo {
 	var (
 		ctx       = context.Background()
 		db        = p.Database
@@ -46,30 +58,33 @@ func (p UserRepo) Create() error {
 		err       error
 	)
 
-	if err = p.GetbyUsername(); err == nil {
-		return ErrUserExists
+	if err = p.GetbyUsername().Error(); err == nil {
+		p.err = ErrUserExists
+		return p
 	}
-	if err = p.GetbyEmail(); err == nil {
-		return ErrUserEmailExists
+	if err = p.GetbyEmail().Error(); err == nil {
+		p.err = ErrUserEmailExists
+		return p
 	}
 
-	if err == ErrNoUser {
+	if p.err == ErrNoUser {
 		userModel = p.Data
 		if err = db.Create(&userModel).Error; err != nil {
 			logger.Warningf(logUnableCreateUser, userModel.Username, userModel.Email)
-			return ErrUnableCreateUser
+			p.err = ErrUnableCreateUser
+			return p
 		}
 		if err := cache.SetUserCache(ctx, userModel); err != nil {
-			return err
+			p.err = err
+			return p
 		}
 		p.AddData(userModel)
-		return nil
+		return p
 	}
-
-	return err
+	return p
 }
 
-func (p UserRepo) GetbyID() error {
+func (p UserRepo) GetbyID() UserRepo {
 	var (
 		ctx = context.Background()
 		db  = p.Database
@@ -77,23 +92,26 @@ func (p UserRepo) GetbyID() error {
 	)
 	if err := cache.GetUserbyUsername(ctx, &p.Data); err != nil {
 		if err == cache.ErrNotFound {
-			return ErrNoUser
+			p.err = ErrNoUser
+			return p
 		}
 		if err = db.Where("id = ?", ID).First(&p.Data).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				if err = cache.SetUserIDNotfound(ctx, p.Data); err != nil {
 					logger.Alert("repo/user (cache set user id notfound): ", err.Error())
 				}
-				return ErrNoUser
+				p.err = ErrNoUser
+				return p
 			}
 			logger.Alertf(logUnableGetUserbyID, p.Data.ID, err.Error())
-			return ErrUnableGetUser
+			p.err = ErrUnableGetUser
+			return p
 		}
 	}
-	return nil
+	return p
 }
 
-func (p UserRepo) GetbyUsername() error {
+func (p UserRepo) GetbyUsername() UserRepo {
 	var (
 		ctx      = context.Background()
 		db       = p.Database
@@ -101,23 +119,26 @@ func (p UserRepo) GetbyUsername() error {
 	)
 	if err := cache.GetUserbyUsername(ctx, &p.Data); err != nil {
 		if err == cache.ErrNotFound {
-			return ErrNoUser
+			p.err = ErrNoUser
+			return p
 		}
 		if err = db.Where("username = ?", username).First(&p.Data).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				if err = cache.SetUserUsernameNotfound(ctx, p.Data); err != nil {
 					logger.Alert("repo/user (cache set user username notfound): ", err.Error())
 				}
-				return ErrNoUser
+				p.err = ErrNoUser
+				return p
 			}
 			logger.Alert(logUnableGetUserbyUsername, p.Data.Username, err.Error())
-			return ErrUnableGetUser
+			p.err = ErrUnableGetUser
+			return p
 		}
 	}
-	return nil
+	return p
 }
 
-func (p UserRepo) GetbyEmail() error {
+func (p UserRepo) GetbyEmail() UserRepo {
 	var (
 		ctx   = context.Background()
 		db    = p.Database
@@ -125,18 +146,21 @@ func (p UserRepo) GetbyEmail() error {
 	)
 	if err := cache.GetUserbyEmail(ctx, &p.Data); err != nil {
 		if err == cache.ErrNotFound {
-			return ErrNoUser
+			p.err = ErrNoUser
+			return p
 		}
 		if err = db.Where("email = ?", email).First(&p.Data).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				if err = cache.SetUserEmailNotfound(ctx, p.Data); err != nil {
 					logger.Alert("repo/user (cache set user email notfound): ", err.Error())
 				}
-				return ErrNoUser
+				p.err = ErrNoUser
+				return p
 			}
 			logger.Alert(logUnableGetUserbyEmail, p.Data.Email, err.Error())
-			return ErrUnableGetUser
+			p.err = ErrUnableGetUser
+			return p
 		}
 	}
-	return nil
+	return p
 }
