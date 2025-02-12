@@ -3,19 +3,27 @@ package services
 import (
 	"strings"
 
-	"github.com/barlus-engineer/barlus-api/Internal/adapters/repository"
+	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
 	"github.com/barlus-engineer/barlus-api/Internal/dto"
+	"github.com/barlus-engineer/barlus-api/Internal/ports"
 	"github.com/barlus-engineer/barlus-api/pkg/text"
 )
 
-type User struct {
+type UserService struct {
+	Repo	ports.UserRepo
 	Data    model.User
 }
 
-func (p User) Register(data dto.UserRegisterForm) error {
+func  NewUserService(repo ports.UserRepo) *UserService {
+	return &UserService{
+		Repo: repo,
+	}
+}
+
+func (p UserService) Register(data dto.UserRegisterForm) error {
 	var (
-		userRepo repository.User
+		Database = database.GetDatabase()
 		err      error
 	)
 
@@ -34,9 +42,10 @@ func (p User) Register(data dto.UserRegisterForm) error {
 		Password: n_password,
 	}
 
-	userRepo.AddData(p.Data)
+	p.Repo.AddDatabase(Database)
+	p.Repo.AddData(p.Data)
 
-	if err = userRepo.Create(); err != nil {
+	if err = p.Repo.Create(); err != nil {
 		return err
 	}
 

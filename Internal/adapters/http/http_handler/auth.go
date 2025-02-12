@@ -1,4 +1,4 @@
-package handler
+package http_handler
 
 import (
 	"net/http"
@@ -13,12 +13,18 @@ var (
 	TextErrShouldBindBodyWithJSON = "Failed to bind request body with JSON"
 )
 
-type Authen struct {
-	svc  services.User
+type AuthHandler struct {
+	svc services.UserService
 	regForm dto.UserRegisterForm
 }
 
-func (p Authen) Register(c *gin.Context) {
+func (p AuthHandler) NewAuthenHandler(userService services.UserService) *AuthHandler {
+	return &AuthHandler{
+		svc: userService,
+	}
+}
+
+func (p AuthHandler) Register(c *gin.Context) {
 	var (
 		err error
 	)

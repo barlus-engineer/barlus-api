@@ -5,41 +5,45 @@ import (
 	"errors"
 
 	"github.com/barlus-engineer/barlus-api/Internal/adapters/cache"
-	"github.com/barlus-engineer/barlus-api/Internal/adapters/database"
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
 	"github.com/barlus-engineer/barlus-api/pkg/logger"
 	"gorm.io/gorm"
 )
 
-type User  struct {
-	Data model.User
+type UserRepo struct {
+	Database gorm.DB
+	Data     model.User
 }
 
 var (
 	ErrUnableCreateUser = errors.New("unable to create user")
-	ErrUnableGetUser = errors.New("unable to get user")
-	ErrUserExists = errors.New("user already exists")
-	ErrUserEmailExists = errors.New("user email already exists")
-	ErrNoUser = errors.New("user dose not exists")
+	ErrUnableGetUser    = errors.New("unable to get user")
+	ErrUserExists       = errors.New("user already exists")
+	ErrUserEmailExists  = errors.New("user email already exists")
+	ErrNoUser           = errors.New("user dose not exists")
 )
 
 var (
-	logUnableCreateUser = "repo/user error create user '%s', email '%s'"
-	logUnableGetUserbyID = "repo/user (get by id[%d]): %s"
+	logUnableCreateUser        = "repo/user error create user '%s', email '%s'"
+	logUnableGetUserbyID       = "repo/user (get by id[%d]): %s"
 	logUnableGetUserbyUsername = "repo/user (get by username[%s]): %s"
-	logUnableGetUserbyEmail = "repo/user (get by email[%s]): %s"
+	logUnableGetUserbyEmail    = "repo/user (get by email[%s]): %s"
 )
 
-func (p *User) AddData(data model.User) {
+func (p *UserRepo) AddDatabase(database *gorm.DB) {
+	p.Database = *database
+}
+
+func (p *UserRepo) AddData(data model.User) {
 	p.Data = data
 }
 
-func (p User) Create() error {
+func (p UserRepo) Create() error {
 	var (
-		ctx = context.Background()
-		db = database.GetDatabase()
+		ctx       = context.Background()
+		db        = p.Database
 		userModel model.User
-		err error
+		err       error
 	)
 
 	if err = p.GetbyUsername(); err == nil {
@@ -65,11 +69,11 @@ func (p User) Create() error {
 	return err
 }
 
-func (p User) GetbyID() error {
+func (p UserRepo) GetbyID() error {
 	var (
 		ctx = context.Background()
-		db = database.GetDatabase()
-		ID = p.Data.ID
+		db  = p.Database
+		ID  = p.Data.ID
 	)
 	if err := cache.GetUserbyUsername(ctx, &p.Data); err != nil {
 		if err == cache.ErrNotFound {
@@ -89,10 +93,10 @@ func (p User) GetbyID() error {
 	return nil
 }
 
-func (p User) GetbyUsername() error {
+func (p UserRepo) GetbyUsername() error {
 	var (
-		ctx = context.Background()
-		db = database.GetDatabase()
+		ctx      = context.Background()
+		db       = p.Database
 		username = p.Data.Username
 	)
 	if err := cache.GetUserbyUsername(ctx, &p.Data); err != nil {
@@ -113,10 +117,10 @@ func (p User) GetbyUsername() error {
 	return nil
 }
 
-func (p User) GetbyEmail() error {
+func (p UserRepo) GetbyEmail() error {
 	var (
-		ctx = context.Background()
-		db = database.GetDatabase()
+		ctx   = context.Background()
+		db    = p.Database
 		email = p.Data.Email
 	)
 	if err := cache.GetUserbyEmail(ctx, &p.Data); err != nil {

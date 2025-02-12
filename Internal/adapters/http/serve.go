@@ -3,7 +3,7 @@ package http
 import (
 	"fmt"
 
-	"github.com/barlus-engineer/barlus-api/Internal/adapters/http/router"
+	"github.com/barlus-engineer/barlus-api/Internal/adapters/http/http_router"
 	"github.com/barlus-engineer/barlus-api/config"
 	"github.com/barlus-engineer/barlus-api/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func RunHTTPServe() {
 		serve = gin.Default()
 	}
 
-	router.Route(serve)
+	http_router.Route(serve)
 
 	logger.Info("HTTP server is starting on: ", serverAddr)
 	if err := serve.Run(serverAddr); err != nil {
