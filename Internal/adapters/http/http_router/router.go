@@ -21,5 +21,6 @@ func Route(api *gin.Engine) {
 		authHandler :=  http_handler.AuthHandler{}.NewAuthenHandler(*userService)
 
 		auth.POST("/register", authHandler.Register)
+		auth.POST("/username_avail", authHandler.UsernameAvail)
 	}
 }
