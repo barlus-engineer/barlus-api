@@ -7,7 +7,7 @@ type AppError struct {
 	appErr error
 }
 
-func NewAppErr(err error, appErr string) AppErrorStruct {
+func NewAppErr(err error, appErr string) AppError {
 	return AppError{
 		svcErr: err,
 		appErr: errors.New(appErr),
