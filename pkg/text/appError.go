@@ -3,13 +3,13 @@ package text
 import "errors"
 
 type AppError struct {
-	svcErr error
-	appErr error
+	SvcErr error
+	AppErr error
 }
 
 func NewAppErr(err error, appErr string) AppError {
 	return AppError{
-		svcErr: err,
-		appErr: errors.New(appErr),
+		SvcErr: err,
+		AppErr: errors.New(appErr),
 	}
 }
