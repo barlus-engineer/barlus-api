@@ -3,16 +3,21 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
-	"github.com/barlus-engineer/barlus-api/pkg/text"
 )
 
 var (
 	user_id_key = "user_id:%d"
 	user_username_key = "user_username:%s"
 	user_email_key = "user_email:%s"
+)
+
+var (
+	ErrEncodeJson = errors.New("unable to encode data to JSON")
+	ErrDecodeJson = errors.New("unable to decode JSON to data")
 )
 
 func SetUserCache(ctx context.Context, user model.User) error {
@@ -24,7 +29,7 @@ func SetUserCache(ctx context.Context, user model.User) error {
 
 	data, err := json.Marshal(user)
 	if err != nil {
-		return text.ErrEncodeJson
+		return ErrEncodeJson
 	}
 
 	if err = Set(ctx, keyid, string(data)); err != nil {
@@ -52,7 +57,7 @@ func GetUserbyID(ctx context.Context, user *model.User) error {
 
 	var cachedUser model.User
 	if err := json.Unmarshal([]byte(data), &cachedUser); err != nil {
-		return text.ErrDecodeJson
+		return ErrDecodeJson
 	}
 	*user = cachedUser
 
@@ -70,7 +75,7 @@ func GetUserbyUsername(ctx context.Context, user *model.User) error {
 
 	var cachedUser model.User
 	if err := json.Unmarshal([]byte(data), &cachedUser); err != nil {
-		return text.ErrDecodeJson
+		return ErrDecodeJson
 	}
 	*user = cachedUser
 
@@ -88,7 +93,7 @@ func GetUserbyEmail(ctx context.Context, user *model.User) error {
 
 	var cachedUser model.User
 	if err := json.Unmarshal([]byte(data), &cachedUser); err != nil {
-		return text.ErrDecodeJson
+		return ErrDecodeJson
 	}
 	*user = cachedUser
 

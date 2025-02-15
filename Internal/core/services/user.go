@@ -1,12 +1,18 @@
 package services
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/barlus-engineer/barlus-api/Internal/core/model"
 	"github.com/barlus-engineer/barlus-api/Internal/dto"
 	"github.com/barlus-engineer/barlus-api/Internal/ports"
 	"github.com/barlus-engineer/barlus-api/pkg/text"
+)
+
+var (
+	ErrUsernameExists = errors.New("this username is already exists")
+	ErrEmailExists = errors.New("this email is already exists")
 )
 
 type UserService struct {
@@ -51,7 +57,7 @@ func (p UserService) Register(data dto.UserRegisterRequest) error {
 	return nil
 }
 
-func (p *UserService) UsernameAvail(data dto.UserUsernameAvailRequest) error {
+func (p UserService) UsernameAvail(data dto.UserUsernameAvailRequest) error {
 	var (
 		err error
 	)
@@ -63,8 +69,26 @@ func (p *UserService) UsernameAvail(data dto.UserUsernameAvailRequest) error {
 	}
 
 	if err = p.Repo.AddData(p.Data).GetbyUsername().ReturnData(&p.Data).Error(); err != nil {
-		return err
+		return nil
 	}
 
-	return nil
+	return ErrUsernameExists
+}
+
+func (p *UserService) EmailAvail(data dto.UserEmailAvailRequest) error {
+	var (
+		err error
+	)
+
+	n_email := text.CleanEmail(strings.TrimSpace(data.Email))
+
+	p.Data = model.User{
+		Email: n_email,
+	}
+
+	if err = p.Repo.AddData(p.Data).GetbyEmail().ReturnData(&p.Data).Error(); err != nil {
+		return nil
+	}
+
+	return ErrEmailExists
 }

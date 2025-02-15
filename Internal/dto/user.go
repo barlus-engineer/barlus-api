@@ -17,3 +17,7 @@ type UserRegisterResponse struct {
 type UserUsernameAvailRequest struct {
 	Username string `json:"username" binding:"required"`
 }
+
+type UserEmailAvailRequest struct {
+	Email string `json:"email" binding:"required"`
+}
